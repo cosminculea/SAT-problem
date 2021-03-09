@@ -1,0 +1,248 @@
+Culea Cosmin
+321 CA
+
+
+
+                           Tema2 - Analiza algoritmilor
+
+
+    ---------------------------------Task1--------------------------------------
+
+        Pentru rezolvarea acestui task am transpus problema famiilor si a 
+    spionilor la o problema de colorare a hartilor, abstractizand datele proble-
+    mei intr-un graf neorientat, unde nodurile reprezinta familiile, muchiile 
+    reprezinta relatiile dintre familii si "culorile" reprezinta spionii care 
+    trebuiesc infiltrati in familii. Deci avem N noduri, M muchii si K culori.
+        Reducerea la problema SAT a problemei colorarii hartilor, si implicit a 
+    distribuirii spionilor in familii am considerat-o astfel:
+
+            1) avem N * K variabile (literali), fiecareia fiindu-i asociat un 
+        numar natural din intervalul [1, N * K] avand o semnificatie. Fie i un
+        numar natural apartinand intervalului [1, N] si j un numar natural 
+        apartinand intervalului [1, K]. Atunci variabila care descrie
+        apartenenta spionului j in familia i este data de variabila 
+
+                            x_ij = (i - 1) * K + j
+
+        Cu alte cuvinte fie x_ij un numar din intervalul [1, N * K], atunci:
+
+                i = (x_ij - 1) / K + 1 este familia pe care o reprezinta x
+                j = (x_ij - 1) % K + 1 reprezinta spionul din familie
+
+            2) Se genereaza 3 tipuri de clauze pentru problema SAT astfel:
+
+                i) clauze care garanteaza ca o familie are cel putin un spion
+                    Pentru oricare i apartine intervalului [1, N], adica pentru
+                fiecare familie se va genera cate o clauza dupa urmatoare 
+                formula, unde x_ij, cu j de la 1 la K reprezinta variabila cu 
+                semnificatia data anterior:
+
+                            x_i1 or x_i2 or x_i3 ... or x_iK
+
+                    Numarul de clauze generate: N
+                    Complexitatea generarii: O(N * K)
+
+                ii) clauze care garanteaza ca o familie are un singur spion si
+                nu mai multi
+                    Pentru oricare n apartine intervalului [1, N], adica pentru
+                fiecare familie se vor genera toate combinarile de pozitii luate
+                cate 2, adica K * (K - 1) / 2 clauze astfel:
+
+                    Pentru oricare i apatine intervalului [1, K - 1] si pentru
+                oricare j apartine intervalului [i + 1, K] vom avea:
+
+                                    (not x_ni) or (not x_nj)
+
+                    Numarul de clauze generate: N * K * (K - 1) / 2
+                    Complexitatea generarii: O(N * K^2)
+
+                iii) clauze care garanteaza ca 2 familii care se inteleg (au
+                muchie intre ele) NU vor avea acelasi spion
+                    Pentru oricare m (muchie/relatie) aprtine intervalului 
+                [1, M] exista i si j (2 familii/2 noduri) apartinand lui 
+                [1, N].
+                    Pentru fiecare m cu n1 si n2, si pentru fiecare k apartinand
+                intervalului [1, K] vom avea:
+
+                                   (not x_ik) or (not x_jk)
+
+                    Numarul de clauze generate: M * K
+                    Complexitatea generarii: O(M * K)
+
+    Avem un numar total de clauze:
+
+        N + N * K * (K - 1) / 2 + M * K 
+
+    Avem o complexitate totala de generare a clauzelor de 
+
+        O(N * K + N * K^2 + M * K) = O(N * K^2 + M * K)
+
+        In final, descifrarea raspunsului oracolului se va face prin verificarea
+    daca variabila(literalul) este positiva(egala cu 1), si se va afisa spionul
+    care se deduce din formula j = (x_ij - 1) % K + 1.
+        Complexitatea de afisare va fi O(N * K), deoarece sunt N * K variabile.
+
+    ---------------------------------Task2--------------------------------------
+
+        Pentru rezolvarea acestui task transpus problema familiilor familiilor 
+    extinse la o problema de gasire a unei clici de dimensiune K intr-un
+    graf neorientat cu N = noduri (familii), M = muchii (relatii) si
+    K = dimensiunea clicii (numarul familiilor din familia extinsa).
+        Reducerea la problema SAT a problemei gasirii k-clica, si implicit a 
+    gasirii unei familii extinse de K familii am considerat-o astfel:
+
+        1) avem N * K variabile (literali), fiecareia fiindu-i asociat un 
+        numar natural din intervalul [1, N * K] avand o semnificatie. Fie i un
+        numar natural apartinand intervalului [1, N] si j un numar natural 
+        apartinand intervalului [1, K]. Atunci variabila care descrie
+        apartenenta familiei i pe pozitia j a familiei extinse este data de 
+        variabila :
+
+                            x_ij = (i - 1) * K + j
+
+        Cu alte cuvinte fie x_ij un numar din intervalul [1, N * K], atunci:
+
+                i = (x_ij - 1) / K + 1 este familia pe care o reprezinta x
+                j = (x_ij - 1) % K + 1 reprezinta pozitia in familia extinsa
+
+        2) Se genereaza 4 tipuri de clauze pentru problema SAT astfel:
+
+                i) clauze care garanteaza ca o pozitie va fi ocupata de cel
+                putin o familie
+                    Pentru oricare i apartine intervalului [1, K], adica pentru
+                fiecare pozitie din clica se va genera cate o clauza dupa 
+                urmatoare formula, unde x_ji cu j de la 1 la N reprezinta 
+                variabila cu semnificatia data anterior:
+
+                            x_1i or x_2i or x_3i ... or x_Ni
+
+                Numarul de clauze generate: K
+                Complexitatea generarii: O(N * K)
+
+                ii) clauze care garanteaza ca o familie ocupa o singura pozitie
+                in clica si nu mai multe
+                    Pentru oricare n apartine intervalului [1, N], adica pentru
+                fiecare familie se vor genera combinarile de pozitii luate cate 
+                2, adica K * (K - 1) / 2 clauze astfel:
+
+                    Pentru oricare i apatine intervalului [1, K - 1] si pentru
+                oricare j apartine intervalului [i + 1, K] vom avea:
+
+                                    (not x_ni) or (not x_nj)
+
+                Numarul de clauze generate: N * K * (K - 1) / 2
+                Complexitatea generarii: O(N * K^2)
+
+                iii) clauze care garanteaza ca o pozitie din clica este ocupata 
+                de o singura familie si nu de mai multe
+                    Pentru oricare k apartine intervalului [1, K], adica pentru
+                fiecare pozitie se vor genera combinarile de familii luate cate
+                2, adica N * (N - 1) / 2 clauze astfel:
+
+                    Pentru oricare i apartine intervalului [1, N - 1], si pentru
+                oricare j apartine intervalului [j + 1, N] vom avea:
+
+                                    (not x_ik) or (not x_jk)
+
+                Numarul de clauze generate: K * N * (N - 1) / 2
+                Complexitatea generarii: O(K * N^2)
+
+                iv) clauze care garanteaza ca 2 familii care NU se inteleg (nu
+                au muchie intre ele) NU pot face parte din aceeasi clica
+                    Pentru aceasta parte am construit graful complementar care
+                are P = (N * (N - 1) / 2) - M muchii. In calculul complexitatii
+                consideram ca avem deja la dispozitie acest graf complementar.
+                    Pentru oricare p (muchie/relatie) apartine intervalului 
+                [1, P] exista i si j (2 familii / 2 noduri) apartinand lui 
+                [1, N].
+                    Pentru fiecare p cu n1 si n2, si pentru fiecare k apartinand
+                intervalului [1, K] vom avea:
+
+                                    (not x_ik) or (not x_jk)
+
+                Numarul de clauze generate: K * P = K * (N * (N - 1) / 2 - M)
+                Complexitatea generarii: O(K * P) = O(K * N^2 + K * M)
+
+    Avem un numar total de clauze:
+
+    K + N * K * (K - 1) / 2 + K * N * (N - 1) / 2 + K * (N * (N - 1) / 2 - M)
+
+    Avem o complexitate totala de generare a clauzelor de 
+
+        O(N * K + K * N^2 + N * K^2 + M * K) = O(K * N^2 + N * K^2 + M * K)
+
+        In plus, de mentionat este faptul ca se creeaza si lista de adiacenta 
+    a grafului complementar, cu mentiunea ca daca intre i si j exista o muchie, 
+    i < j, lista lui i il va avea pe j, dar lista lui j nu il va avea pe i.
+        Aceasta va avea o complexitate de O(n^3) in cel mai rau caz, cand graful
+    initial este unul complet.
+
+        In final, descifrarea raspunsului oracolului se va face prin verificarea
+    daca variabila(literalul) este pozitiva(egala cu 1), si se va afisa familia
+    care se deduce din formula i = (x_ij - 1) / K + 1.
+        Complexitatea de afisare va fi O(N * K), deoarece sunt N * K variabile.
+
+    ---------------------------------Task3--------------------------------------
+
+        Pentru rezolvarea acestui task am transpus gasirea unui numar minim de
+    arestari cu problema minimal vertex cover, in care am cosiderat nodurile ca
+    fiind familiile si muchiile relatiile dintre ele.
+
+        Proprietate:
+            - o multime de noduri este un vertex cover daca si numai daca 
+    complementul acestei multimi este o multime independenta
+
+        In consecinta, un vertex cover este minimal daca si numai daca 
+    complementul multimii este o multime independenta maximala.
+        In plus, o multime independenta maximala a unui graf reprezinta o clica
+    maxima din graful complementar.
+        Prin urmare, pentru a gasi numarul minim de arestari, trebuie sa se
+    gaseasca o familie extinsa cu un numar maxim de familii a grafului 
+    complementar, ceea ce reduce task-ul la folosirea succesiva a taskului 
+    anterior pentru care se dau numarul de familii, numarul de relatii 
+    complementare, un K maximal posibil si relatiile  dintre familii. 
+        In primul rand, se construieste graful complementar cu aceeasi 
+    complexitate mentionata in taskul anterio si se calculeaza un K din ecuatia 
+    de gradul 2 -> K * (K - 1) / 2 = P, unde P este numarul de relatii 
+    complementare calculat asemanator taskului anterior. S-a considerat aceasta
+    simpla optimizarea pentru a nu se considera de la inceput K = N.
+        Mai departe, cat timp raspunsul oracolului este fals, adica nu s-a gasit
+    nicio familie extinsa (clica) cu acel numar K, reapela task-ul 2 insa cu 
+    K decrementat. Oracolul va gasi intr-un final o clica, chiar daca aceasta
+    este 1.
+        Avand raspunsul taskului 2 cand oracolul intoarce True, vom extrage
+    multimea independenta a taskului initial. Deci familiie ce trebuiesc
+    arestate se vor gasi in multimea complementara a multimii data de task2.
+
+    ---------------------------------Bonus--------------------------------------
+
+        Pentru rezolvarea bonusului am mers pe acelasi principiu ca la task3,
+    folosindu-ma de asemenea de task2, dar si de conceptul de soft clauses.
+        Prin urmare, am parcurs aceiasi pasi ca la task-ul 3 si am facut o
+    singura interogare a oracolului cu clauze pe acelasi principiu ca la task2,
+    cu mentiunea ca fiecarei clauze care garanteaza ocuparea unei pozitii
+    de cel putin o familie i s-a fost atribuita cate un weight egal cu numarul
+    pozitiei respective. Restul clauzelor au fost desemnate ca fiind hard prin
+    atribuirea weight-ului maxim si anume K * (K - 1) / 2 + 1.
+        Pentru a asigura o eficienta cat mai buna, s-a analizat cu atentie
+    relatiile din cadrul grafului complementar si s-a calculat un K maxim cat 
+    mai apropiat de valoarea lui K reala. Astfel s-au redus semnificativ numarul
+    de operatii pe care ar trebui sa le faca oracolul.
+
+        Pe langa complexitatile date de generarea clauzelor si de afisare,
+    mentionate si anterior in task2 si task3, mai exista o complexitate 
+    determinata de algoritmul de gasire a lui K.
+
+        creeare liste -> O(N)
+        sortarea listei dupa numar de relatii -> O(nlogn)
+        calculateFactors -> O(n) analiza amortizata
+        analiza pe lista si extragere K -> O(n^2) in cel mai rau caz
+
+        In total avem pentru calculateMaximumExtendedFamily o complexitate de
+    O(N^2).
+
+        De mentionat este ca pentru liste s-a folosit ArrayList-uri care au 
+    uratoarele complexitati in Java:
+        - get -> O(1)
+        - add -> O(1) (adaugare la sfarsit)
+        - contains -> O(n)
